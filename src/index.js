@@ -1,17 +1,33 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import { PublicClientApplication } from '@azure/msal-browser'
+import { MsalProvider } from '@azure/msal-react'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App'
+import { msalConfig } from './authConfig'
+import { PageLayout } from './components/PageLayout'
+import './index.css'
+import {
+  AuthenticatedTemplate,
+  UnauthenticatedTemplate,
+} from '@azure/msal-react'
+import { SignInButton } from './components/SigninButton'
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const msalInstance = new PublicClientApplication(msalConfig)
+
+const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
   <React.StrictMode>
-    <App />
+    <MsalProvider instance={msalInstance}>
+      <PageLayout>
+        <AuthenticatedTemplate>
+          <App />
+        </AuthenticatedTemplate>
+        <UnauthenticatedTemplate>
+          <p>You are not signed in! Please sign in.</p>
+          <SignInButton />
+        </UnauthenticatedTemplate>
+      </PageLayout>
+    </MsalProvider>
   </React.StrictMode>
-);
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+)
